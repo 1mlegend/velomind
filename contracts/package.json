@@ -1,0 +1,20 @@
+{
+  "name": "velomind-contracts",
+  "version": "1.0.0",
+  "description": "VeloMind smart contracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "@types/node": "^25.3.5",
+    "dotenv": "^17.3.1",
+    "hardhat": "^2.28.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
