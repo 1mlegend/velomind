@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id            String   @id @default(uuid())
+  walletAddress String
+  model         String
+  inputHash     String
+  outputHash    String
+  response      String?
+  txHash        String?
+  proofTxHash   String?
+  status        String   @default("pending")
+  cost          String   @default("0.00001")
+  createdAt     DateTime @default(now())
+
+  proof Proof?
+}
+
+model Proof {
+  id            String   @id @default(uuid())
+  jobId         String   @unique
+  inputHash     String
+  outputHash    String
+  onChainTxHash String?
+  verified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  job Job @relation(fields: [jobId], references: [id])
+}
