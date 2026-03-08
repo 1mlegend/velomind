@@ -151,4 +151,60 @@
     0%, 100% { opacity: 0.3; }
     50% { opacity: 0.8; }
   }
+
+  /* Hero animated gradient background */
+  @keyframes hero-gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .hero-gradient-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 50%,
+      hsl(160 100% 50% / 0.06) 0%,
+      hsl(215 100% 62% / 0.04) 40%,
+      transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: hero-gradient-shift 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Pulsing green dot for live indicator */
+  @keyframes live-dot-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsl(160 100% 50% / 0.5);
+    }
+    50% {
+      box-shadow: 0 0 0 4px hsl(160 100% 50% / 0);
+    }
+  }
+
+  .live-dot {
+    animation: live-dot-pulse 2s ease-in-out infinite;
+  }
+
+  /* Dotted connector line for how-it-works steps */
+  .step-connector {
+    position: relative;
+  }
+
+  .step-connector:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -1rem;
+    width: calc(100% - 100% + 1rem);
+    border-top: 2px dashed hsl(160 100% 50% / 0.25);
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
+    .step-connector:not(:last-child)::after {
+      display: none;
+    }
+  }
 }

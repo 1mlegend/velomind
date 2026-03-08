@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Play, History, Search, Menu, X } from "lucide-react";
+import { LayoutDashboard, Play, History, Search, Menu, X, Globe } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
 import velomindLogo from "@/assets/velomind-logo.png";
@@ -19,7 +19,7 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 glass border-r border-border/30 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 glass border-r border-border/30 transform transition-transform duration-300 lg:translate-x-0 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src={velomindLogo} alt="Velomind" className="w-8 h-8 object-contain" />
@@ -30,7 +30,7 @@ const DashboardLayout = () => {
           </button>
         </div>
 
-        <nav className="px-3 space-y-1">
+        <nav className="px-3 space-y-1 flex-1">
           {navItems.map((item) => {
             const active = location.pathname === item.path;
             return (
@@ -51,6 +51,16 @@ const DashboardLayout = () => {
           })}
         </nav>
 
+        {/* Sidebar bottom: wallet + network */}
+        <div className="px-3 pb-4 space-y-3">
+          <ConnectWalletButton variant="sidebar" />
+          <div className="flex items-center gap-2 px-4 py-2 text-muted-foreground">
+            <Globe className="w-3.5 h-3.5" />
+            <span className="text-xs">Network:</span>
+            <span className="text-xs text-foreground font-medium">Base</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-primary live-dot ml-auto" />
+          </div>
+        </div>
       </aside>
 
       {/* Main */}
@@ -59,6 +69,10 @@ const DashboardLayout = () => {
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-muted-foreground">
             <Menu className="w-5 h-5" />
           </button>
+          <Link to="/" className="flex items-center gap-2 lg:hidden">
+            <img src={velomindLogo} alt="Velomind" className="w-6 h-6 object-contain" />
+            <span className="font-display font-semibold text-sm text-foreground">Velo<span className="text-primary">Mind</span></span>
+          </Link>
           <div className="flex-1" />
           <ConnectWalletButton />
         </header>

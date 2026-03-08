@@ -49,6 +49,7 @@ const Landing = () => {
         <div className="absolute inset-0">
           <NetworkGlobe />
         </div>
+        <div className="hero-gradient-bg" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
           <motion.div
@@ -56,6 +57,17 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
+            {/* Network Status Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8"
+            >
+              <span className="w-2 h-2 rounded-full bg-primary live-dot" />
+              <span className="text-primary text-xs font-medium tracking-wide">Live on Base</span>
+            </motion.div>
+
             <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6">
               Velo<span className="text-primary text-glow-green">Mind</span>
             </h1>
@@ -125,12 +137,12 @@ const Landing = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="glass-hover rounded-2xl p-8 gradient-border"
+                className="glass-hover rounded-2xl p-8 pt-10 pb-10 gradient-border"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 glow-green">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 glow-green">
                   <f.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-display text-xl font-semibold text-foreground mb-3">{f.title}</h3>
+                <h3 className="font-display text-xl font-semibold text-foreground mb-4">{f.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
@@ -196,25 +208,31 @@ const Landing = () => {
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-5 gap-4">
+          <div className="grid md:grid-cols-5 gap-8">
             {[
               { step: "01", title: "User Input", desc: "Submit your prompt or data" },
               { step: "02", title: "Encryption", desc: "Client-side encryption applied" },
               { step: "03", title: "AI Compute", desc: "Private inference executed" },
               { step: "04", title: "Proof Gen", desc: "Cryptographic proof created" },
               { step: "05", title: "On-Chain", desc: "Proof anchored on Base" },
-            ].map((s, i) => (
+            ].map((s, i, arr) => (
               <motion.div
                 key={s.step}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="glass-hover rounded-2xl p-6 text-center gradient-border"
+                className="relative"
               >
-                <div className="text-primary font-display font-bold text-2xl mb-2 text-glow-green">{s.step}</div>
-                <h3 className="font-display font-semibold text-foreground mb-1">{s.title}</h3>
-                <p className="text-muted-foreground text-xs">{s.desc}</p>
+                {/* Dotted connector line between steps */}
+                {i < arr.length - 1 && (
+                  <div className="hidden md:block absolute top-10 -right-4 w-8 border-t-2 border-dashed border-primary/25" />
+                )}
+                <div className="glass-hover rounded-2xl p-6 py-8 text-center gradient-border">
+                  <div className="text-primary font-display font-bold text-2xl mb-3 text-glow-green">{s.step}</div>
+                  <h3 className="font-display font-semibold text-foreground mb-2">{s.title}</h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed">{s.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
