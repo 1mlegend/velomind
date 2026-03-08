@@ -1,14 +1,8 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-
-const jobs = [
-  { id: "VM-0x8f3a", model: "GPT-4 Private", status: "verified", cost: "0.003 ETH", timestamp: "2026-03-06 14:23" },
-  { id: "VM-0x1b2c", model: "LLaMA-70B", status: "processing", cost: "0.005 ETH", timestamp: "2026-03-06 14:18" },
-  { id: "VM-0xd4e5", model: "Mistral-7B", status: "verified", cost: "0.001 ETH", timestamp: "2026-03-06 14:05" },
-  { id: "VM-0x9a7f", model: "GPT-4 Private", status: "verified", cost: "0.004 ETH", timestamp: "2026-03-06 13:52" },
-  { id: "VM-0x3c6d", model: "Claude-3 Private", status: "failed", cost: "0.002 ETH", timestamp: "2026-03-06 13:40" },
-  { id: "VM-0xe7f8", model: "Mistral-7B", status: "verified", cost: "0.001 ETH", timestamp: "2026-03-06 13:28" },
-];
+import { ArrowUpRight, Wallet } from "lucide-react";
+import { useAccount } from "wagmi";
+import { useQuery } from "@tanstack/react-query";
+import { getJobs } from "@/lib/api";
 
 const statusColors: Record<string, string> = {
   verified: "bg-primary/20 text-primary",
@@ -18,6 +12,24 @@ const statusColors: Record<string, string> = {
 };
 
 const HistoryPage = () => {
+  const { address, isConnected } = useAccount();
+
+  const { data: jobs, isLoading } = useQuery({
+    queryKey: ["jobs", address],
+    queryFn: () => getJobs(address!),
+    enabled: !!address,
+  });
+
+  if (!isConnected) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <Wallet className="w-12 h-12 text-primary mb-4" />
+        <h2 className="font-display text-xl font-bold text-foreground mb-2">Connect Your Wallet</h2>
+        <p className="text-muted-foreground text-sm">Connect your wallet to view inference history</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
@@ -30,7 +42,6 @@ const HistoryPage = () => {
         animate={{ opacity: 1 }}
         className="glass rounded-xl gradient-border overflow-hidden"
       >
-        {/* Header */}
         <div className="hidden sm:grid grid-cols-6 gap-4 px-5 py-3 border-b border-border/30 text-xs text-muted-foreground font-medium">
           <span>Job ID</span>
           <span>Model</span>
@@ -40,30 +51,41 @@ const HistoryPage = () => {
           <span></span>
         </div>
 
-        {/* Rows */}
         <div className="divide-y divide-border/20">
-          {jobs.map((job, i) => (
-            <motion.div
-              key={job.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="grid sm:grid-cols-6 gap-2 sm:gap-4 px-5 py-4 hover:bg-muted/20 transition-colors items-center cursor-pointer"
-            >
-              <span className="font-mono text-xs text-primary">{job.id}</span>
-              <span className="text-foreground text-sm">{job.model}</span>
-              <span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[job.status]}`}>
-                  {job.status}
+          {isLoading ? (
+            <div className="px-5 py-8 text-center text-muted-foreground text-sm">Loading...</div>
+          ) : (!jobs || jobs.length === 0) ? (
+            <div className="px-5 py-8 text-center text-muted-foreground text-sm">No jobs yet.</div>
+          ) : (
+            jobs.map((job: any, i: number) => (
+              <motion.div
+                key={job.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.05 }}
+                className="grid sm:grid-cols-6 gap-2 sm:gap-4 px-5 py-4 hover:bg-muted/20 transition-colors items-center"
+              >
+                <span className="font-mono text-xs text-primary">{job.id.slice(0, 10)}...</span>
+                <span className="text-foreground text-sm">{job.model}</span>
+                <span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[job.status] || statusColors.pending}`}>
+                    {job.status}
+                  </span>
                 </span>
-              </span>
-              <span className="text-muted-foreground text-xs">{job.cost}</span>
-              <span className="text-muted-foreground text-xs">{job.timestamp}</span>
-              <span className="text-right">
-                <ArrowUpRight className="w-3 h-3 text-muted-foreground inline" />
-              </span>
-            </motion.div>
-          ))}
+                <span className="text-muted-foreground text-xs">{job.cost} ETH</span>
+                <span className="text-muted-foreground text-xs">{new Date(job.createdAt).toLocaleString()}</span>
+                <span className="text-right">
+                  {job.proofTxHash ? (
+                    <a href={`https://basescan.org/tx/${job.proofTxHash}`} target="_blank" rel="noopener noreferrer">
+                      <ArrowUpRight className="w-3 h-3 text-primary inline" />
+                    </a>
+                  ) : (
+                    <ArrowUpRight className="w-3 h-3 text-muted-foreground inline" />
+                  )}
+                </span>
+              </motion.div>
+            ))
+          )}
         </div>
       </motion.div>
     </div>
