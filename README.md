@@ -139,25 +139,6 @@ cd backend && npm run dev
 cd frontend && npm run dev
 ```
 
-## Environment Variables
-
-### Backend
-```
-DATABASE_URL=postgresql://...
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-PORT=3001
-CORS_ORIGIN=https://velomind.xyz
-```
-
-### Frontend
-```
-VITE_API_URL=https://api.velomind.xyz
-VITE_NETWORK=base
-VITE_PAYMENT_GATEWAY=0xbFE0F6CeBEB3B5D5156c4206e4013688Ce673F7C
-VITE_PROOF_REGISTRY=0xF5e0e64af3B1066F8c651Ad0f6eA09904f7EF11F
-```
-
 ## License
 
 MIT
