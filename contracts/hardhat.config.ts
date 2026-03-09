@@ -8,9 +8,15 @@ const config: HardhatUserConfig = {
   networks: {
     base: {
       url: "https://mainnet.base.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts: process.env.PRIVATE_KEY ? [`0x${process.env.PRIVATE_KEY}`] : [],
     },
     hardhat: {},
+  },
+  etherscan: {
+    apiKey: process.env.BASESCAN_API_KEY || "",
+  },
+  sourcify: {
+    enabled: false,
   },
 };
 

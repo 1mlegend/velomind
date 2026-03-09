@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+*.db
+*.db-journal
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+.claude/
