@@ -21,7 +21,7 @@ const ConnectWalletButton = ({ variant = 'default' }: { variant?: 'default' | 's
               </div>
               <div>
                 <p className="text-foreground text-xs font-medium">{truncatedAddress}</p>
-                <p className="text-muted-foreground text-[10px]">Base Mainnet</p>
+                <p className="text-muted-foreground text-[10px]">BNB Chain</p>
               </div>
             </div>
             <button
@@ -35,7 +35,7 @@ const ConnectWalletButton = ({ variant = 'default' }: { variant?: 'default' | 's
         ) : (
           <button
             onClick={() => connect({ connector: connectors[0] })}
-            className="flex items-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(160_100%_50%/0.3)] transition-all duration-300"
+            className="flex items-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(45_93%_50%/0.3)] transition-all duration-300"
           >
             <Wallet className="w-4 h-4" />
             Connect Wallet
@@ -60,7 +60,7 @@ const ConnectWalletButton = ({ variant = 'default' }: { variant?: 'default' | 's
   return (
     <button
       onClick={() => connect({ connector: connectors[0] })}
-      className="px-5 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(160_100%_50%/0.3)] transition-all duration-300 flex items-center gap-2"
+      className="px-5 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(45_93%_50%/0.3)] transition-all duration-300 flex items-center gap-2"
     >
       <Wallet className="w-4 h-4" />
       Connect Wallet

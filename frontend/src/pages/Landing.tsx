@@ -35,7 +35,7 @@ const Landing = () => {
               </a>
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(160_100%_50%/0.3)] transition-all duration-300"
+                className="px-5 py-2 rounded-full bg-primary text-primary-foreground font-medium text-sm hover:shadow-[0_0_20px_hsl(45_93%_50%/0.3)] transition-all duration-300"
               >
                 Launch App
               </button>
@@ -65,7 +65,7 @@ const Landing = () => {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8"
             >
               <span className="w-2 h-2 rounded-full bg-primary live-dot" />
-              <span className="text-primary text-xs font-medium tracking-wide">Live on Base</span>
+              <span className="text-primary text-xs font-medium tracking-wide">Live on BNB Chain</span>
             </motion.div>
 
             <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-6">
@@ -75,12 +75,12 @@ const Landing = () => {
               The Future is Shared. The Network is Yours.
             </p>
             <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto mb-10">
-              Collective security. Privacy. Decentralized strength. Run private AI inference with cryptographic proof verification on Base.
+              Collective security. Privacy. Decentralized strength. Run private AI inference with cryptographic proof verification on BNB Chain.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/dashboard")}
-                className="group px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:shadow-[0_0_30px_hsl(160_100%_50%/0.4)] transition-all duration-300 flex items-center justify-center gap-2"
+                className="group px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:shadow-[0_0_30px_hsl(45_93%_50%/0.4)] transition-all duration-300 flex items-center justify-center gap-2"
               >
                 Launch App
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -186,7 +186,7 @@ const Landing = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="aspect-square rounded-3xl glass gradient-border flex items-center justify-center overflow-hidden">
+              <div className="aspect-square rounded-3xl glass gradient-border flex items-center justify-center overflow-hidden" style={{ filter: 'hue-rotate(225deg) saturate(2.5) brightness(1.2)' }}>
                 <img src={privacyIllustration} alt="Privacy Illustration" className="w-full h-full object-cover" />
               </div>
             </motion.div>
@@ -214,7 +214,7 @@ const Landing = () => {
               { step: "02", title: "Encryption", desc: "Client-side encryption applied" },
               { step: "03", title: "AI Compute", desc: "Private inference executed" },
               { step: "04", title: "Proof Gen", desc: "Cryptographic proof created" },
-              { step: "05", title: "On-Chain", desc: "Proof anchored on Base" },
+              { step: "05", title: "On-Chain", desc: "Proof anchored on BNB Chain" },
             ].map((s, i, arr) => (
               <motion.div
                 key={s.step}
@@ -237,7 +237,7 @@ const Landing = () => {
             ))}
           </div>
 
-          <div className="mt-20 w-full aspect-video rounded-3xl overflow-hidden gradient-border">
+          <div className="mt-20 w-full aspect-video rounded-3xl overflow-hidden gradient-border" style={{ filter: 'hue-rotate(225deg) saturate(2.5) brightness(1.2)' }}>
             {/* @ts-ignore */}
             <spline-viewer url="https://prod.spline.design/hVjddXLNOEh1biJE/scene.splinecode" style={{ width: '100%', height: '100%' }} />
           </div>
@@ -253,7 +253,7 @@ const Landing = () => {
             <span className="font-display font-semibold text-foreground">Velomind</span>
           </div>
           <p className="text-muted-foreground text-xs">
-            © 2026 Velomind. Built on Base. Privacy by design.
+            © 2026 Velomind. Built on BNB Chain. Privacy by design.
           </p>
           <div className="flex items-center gap-4">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">

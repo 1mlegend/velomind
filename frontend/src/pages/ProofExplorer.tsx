@@ -32,7 +32,7 @@ const ProofExplorer = () => {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="font-display text-2xl font-bold text-foreground">Proof Explorer</h1>
-        <p className="text-muted-foreground text-sm">Browse and verify cryptographic proofs anchored on Base</p>
+        <p className="text-muted-foreground text-sm">Browse and verify cryptographic proofs anchored on BNB Chain</p>
       </div>
 
       <div className="relative">

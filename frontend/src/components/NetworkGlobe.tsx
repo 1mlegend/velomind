@@ -62,7 +62,7 @@ const NetworkGlobe = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 120) {
             const alpha = (1 - dist / 120) * 0.25;
-            ctx.strokeStyle = `rgba(0, 255, 163, ${alpha})`;
+            ctx.strokeStyle = `rgba(240, 185, 11, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
@@ -79,15 +79,15 @@ const NetworkGlobe = () => {
 
         // Glow
         const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.radius * 6);
-        gradient.addColorStop(0, `rgba(0, 255, 163, ${glow * 0.4})`);
-        gradient.addColorStop(1, "rgba(0, 255, 163, 0)");
+        gradient.addColorStop(0, `rgba(240, 185, 11, ${glow * 0.4})`);
+        gradient.addColorStop(1, "rgba(240, 185, 11, 0)");
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius * 6, 0, Math.PI * 2);
         ctx.fill();
 
         // Core
-        ctx.fillStyle = `rgba(0, 255, 163, ${glow})`;
+        ctx.fillStyle = `rgba(240, 185, 11, ${glow})`;
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -108,7 +108,7 @@ const NetworkGlobe = () => {
       }
 
       // Globe outline
-      ctx.strokeStyle = "rgba(0, 255, 163, 0.06)";
+      ctx.strokeStyle = "rgba(240, 185, 11, 0.06)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(cx(), cy(), maxR(), 0, Math.PI * 2);

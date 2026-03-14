@@ -89,7 +89,7 @@ const DashboardHome = () => {
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[job.status] || statusColors.pending}`}>
                     {job.status}
                   </span>
-                  <span className="text-muted-foreground text-xs">{job.cost} ETH</span>
+                  <span className="text-muted-foreground text-xs">{job.cost} BNB</span>
                   <span className="text-muted-foreground text-xs hidden sm:block">
                     {new Date(job.createdAt).toLocaleString()}
                   </span>

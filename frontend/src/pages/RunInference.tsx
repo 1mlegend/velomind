@@ -162,12 +162,12 @@ const RunInference = () => {
           <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-2">
               <Zap className="w-3 h-3 text-primary" />
-              <span className="text-xs text-muted-foreground">Cost: <span className="text-primary font-medium">0.00001 ETH</span></span>
+              <span className="text-xs text-muted-foreground">Cost: <span className="text-primary font-medium">0.00001 BNB</span></span>
             </div>
             <button
               onClick={handleRun}
               disabled={isRunning || !prompt.trim()}
-              className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:shadow-[0_0_20px_hsl(160_100%_50%/0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:shadow-[0_0_20px_hsl(45_93%_50%/0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isRunning ? (
                 <>
@@ -237,12 +237,12 @@ const RunInference = () => {
 
           <div className="flex gap-3 pt-2">
             <a
-              href={`https://basescan.org/tx/${result.txHash}`}
+              href={`https://bscscan.com/tx/${result.txHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
             >
-              View on BaseScan
+              View on BscScan
             </a>
           </div>
         </motion.div>

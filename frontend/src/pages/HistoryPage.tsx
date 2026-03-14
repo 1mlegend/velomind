@@ -72,11 +72,11 @@ const HistoryPage = () => {
                     {job.status}
                   </span>
                 </span>
-                <span className="text-muted-foreground text-xs">{job.cost} ETH</span>
+                <span className="text-muted-foreground text-xs">{job.cost} BNB</span>
                 <span className="text-muted-foreground text-xs">{new Date(job.createdAt).toLocaleString()}</span>
                 <span className="text-right">
                   {job.proofTxHash ? (
-                    <a href={`https://basescan.org/tx/${job.proofTxHash}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://bscscan.com/tx/${job.proofTxHash}`} target="_blank" rel="noopener noreferrer">
                       <ArrowUpRight className="w-3 h-3 text-primary inline" />
                     </a>
                   ) : (

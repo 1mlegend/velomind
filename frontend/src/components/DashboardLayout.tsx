@@ -57,7 +57,7 @@ const DashboardLayout = () => {
           <div className="flex items-center gap-2 px-4 py-2 text-muted-foreground">
             <Globe className="w-3.5 h-3.5" />
             <span className="text-xs">Network:</span>
-            <span className="text-xs text-foreground font-medium">Base</span>
+            <span className="text-xs text-foreground font-medium">BNB Chain</span>
             <span className="w-1.5 h-1.5 rounded-full bg-primary live-dot ml-auto" />
           </div>
         </div>

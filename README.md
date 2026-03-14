@@ -1,8 +1,8 @@
 # VeloMind
 
-Verifiable AI inference layer on Base. Run models, generate cryptographic proofs, anchor results on-chain.
+Verifiable AI inference layer on BNB Chain. Run models, generate cryptographic proofs, anchor results on-chain.
 
-VeloMind bridges the gap between off-chain AI computation and on-chain verifiability. Every inference request is hashed, executed, and registered as an immutable proof on the Base L2 — enabling trustless auditability for AI-powered applications.
+VeloMind bridges the gap between off-chain AI computation and on-chain verifiability. Every inference request is hashed, executed, and registered as an immutable proof on the BNB Smart Chain — enabling trustless auditability for AI-powered applications.
 
 ---
 
@@ -10,8 +10,8 @@ VeloMind bridges the gap between off-chain AI computation and on-chain verifiabi
 
 ```
                                  +------------------+
-                                 |   Base L2 Chain   |
-                                 |  (EVM / 8453)     |
+                                 |  BNB Smart Chain  |
+                                 |  (EVM / 56)       |
                                  +--------+---------+
                                           |
                           +---------------+---------------+
@@ -41,16 +41,16 @@ VeloMind bridges the gap between off-chain AI computation and on-chain verifiabi
 
 ## Contracts
 
-Deployed and verified on Base Mainnet.
+To be deployed on BNB Smart Chain (BSC Mainnet).
 
 | Contract | Address | Purpose |
 |---|---|---|
-| PaymentGateway | [`0xbFE0F6CeBEB3B5D5156c4206e4013688Ce673F7C`](https://basescan.org/address/0xbFE0F6CeBEB3B5D5156c4206e4013688Ce673F7C#code) | Handles inference fee collection with per-job payment tracking |
-| ProofRegistry | [`0xF5e0e64af3B1066F8c651Ad0f6eA09904f7EF11F`](https://basescan.org/address/0xF5e0e64af3B1066F8c651Ad0f6eA09904f7EF11F#code) | Stores and indexes inference proofs by job ID and user address |
+| PaymentGateway | TBD | Handles inference fee collection (BNB) with per-job payment tracking |
+| ProofRegistry | TBD | Stores and indexes inference proofs by job ID and user address |
 
 ### PaymentGateway
 
-Accepts ETH payments tied to a `bytes32` job identifier. Enforces a minimum inference fee and emits `PaymentReceived` events for off-chain indexing.
+Accepts BNB payments tied to a `bytes32` job identifier. Enforces a minimum inference fee and emits `PaymentReceived` events for off-chain indexing.
 
 ```solidity
 function payForInference(bytes32 jobId) external payable
@@ -70,9 +70,9 @@ function getProofsByUser(address user) external view returns (bytes32[] memory)
 
 ### Smart Contracts
 - **Solidity 0.8.24** — Minimal, gas-optimized contracts with no external dependencies
-- **Hardhat** — Compilation, testing, deployment, and BaseScan verification
+- **Hardhat** — Compilation, testing, deployment, and BscScan verification
 - **TypeChain** — Auto-generated TypeScript bindings for type-safe contract interaction
-- **Base L2** — Low-cost EVM execution with Ethereum L1 security
+- **BNB Smart Chain** — Low-cost EVM execution with high throughput
 
 ### Backend
 - **Express 5** — HTTP API layer with structured route handlers
@@ -95,7 +95,7 @@ function getProofsByUser(address user) external view returns (bytes32[] memory)
 ### Infrastructure
 - **Railway** — Backend hosting with managed PostgreSQL
 - **Vercel** — Frontend edge deployment with automatic previews
-- **BaseScan** — Contract source verification
+- **BscScan** — Contract source verification
 
 ## How It Works
 
