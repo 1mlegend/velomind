@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Play, Upload, Loader2, CheckCircle, Zap, Shield, Lock } from "lucide-react";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
-import { parseEther } from "viem";
+import { Play, Loader2, CheckCircle, Zap, Lock } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { generateEncryptionKey, encryptPrompt, decryptResponse } from "@/lib/crypto";
 import { runInferenceAPI, confirmProof } from "@/lib/api";
-import { CONTRACTS } from "@/config/contracts";
+import { TREASURY_ADDRESS, INFERENCE_FEE } from "@/config/wagmi";
 
 const models = ["GPT-4 Private", "LLaMA-70B Encrypted", "Mistral-7B Secure", "Claude-3 Private"];
 
@@ -19,17 +20,16 @@ type InferenceResult = {
 type Step = "idle" | "encrypting" | "inferring" | "paying" | "proving" | "done";
 
 const RunInference = () => {
-  const { address, isConnected } = useAccount();
+  const { publicKey, connected, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   const [model, setModel] = useState(models[0]);
   const [prompt, setPrompt] = useState("");
   const [step, setStep] = useState<Step>("idle");
   const [result, setResult] = useState<InferenceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { writeContractAsync } = useWriteContract();
-
   const handleRun = async () => {
-    if (!prompt.trim() || !isConnected || !address) return;
+    if (!prompt.trim() || !connected || !publicKey) return;
     setError(null);
     setResult(null);
 
@@ -44,40 +44,29 @@ const RunInference = () => {
       const inferenceResult = await runInferenceAPI({
         encryptedPrompt: encryptedPromptData,
         model,
-        walletAddress: address,
+        walletAddress: publicKey.toBase58(),
         encryptionKey: keyHex,
       });
 
-      // Step 3: Pay
+      // Step 3: Pay via SOL transfer
       setStep("paying");
-      const payTxHash = await writeContractAsync({
-        address: CONTRACTS.paymentGateway.address,
-        abi: CONTRACTS.paymentGateway.abi,
-        functionName: "payForInference",
-        args: [inferenceResult.jobId as `0x${string}`],
-        value: parseEther("0.00001"),
-      });
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: new PublicKey(TREASURY_ADDRESS),
+          lamports: Math.round(INFERENCE_FEE * LAMPORTS_PER_SOL),
+        })
+      );
+      const txHash = await sendTransaction(transaction, connection);
+      await connection.confirmTransaction(txHash, 'confirmed');
 
-      // Step 4: Submit proof on-chain
+      // Step 4: Confirm proof in backend
       setStep("proving");
-      const proofTxHash = await writeContractAsync({
-        address: CONTRACTS.proofRegistry.address,
-        abi: CONTRACTS.proofRegistry.abi,
-        functionName: "submitProof",
-        args: [
-          inferenceResult.jobId as `0x${string}`,
-          inferenceResult.inputHash as `0x${string}`,
-          inferenceResult.outputHash as `0x${string}`,
-          model,
-        ],
-      });
-
-      // Confirm proof in backend
       await confirmProof({
         jobId: inferenceResult.jobId,
         inputHash: inferenceResult.inputHash,
         outputHash: inferenceResult.outputHash,
-        onChainTxHash: proofTxHash,
+        onChainTxHash: txHash,
       });
 
       // Decrypt response
@@ -86,7 +75,7 @@ const RunInference = () => {
       setResult({
         output: decryptedOutput,
         proofHash: inferenceResult.outputHash,
-        txHash: proofTxHash,
+        txHash: txHash,
         jobId: inferenceResult.jobId,
       });
       setStep("done");
@@ -102,7 +91,7 @@ const RunInference = () => {
     encrypting: "Encrypting your prompt...",
     inferring: "Running private inference...",
     paying: "Processing payment...",
-    proving: "Submitting proof on-chain...",
+    proving: "Confirming proof...",
     done: "",
   };
 
@@ -115,7 +104,7 @@ const RunInference = () => {
         <p className="text-muted-foreground text-sm">Execute private AI computation with proof generation</p>
       </div>
 
-      {!isConnected && (
+      {!connected && (
         <div className="glass rounded-2xl p-6 gradient-border text-center">
           <Lock className="w-8 h-8 text-primary mx-auto mb-3" />
           <p className="text-foreground font-medium">Connect your wallet to run inference</p>
@@ -123,7 +112,7 @@ const RunInference = () => {
         </div>
       )}
 
-      {isConnected && (
+      {connected && (
         <div className="glass rounded-2xl p-6 gradient-border space-y-5">
           {/* Model selector */}
           <div>
@@ -162,12 +151,12 @@ const RunInference = () => {
           <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-2">
               <Zap className="w-3 h-3 text-primary" />
-              <span className="text-xs text-muted-foreground">Cost: <span className="text-primary font-medium">0.00001 BNB</span></span>
+              <span className="text-xs text-muted-foreground">Cost: <span className="text-primary font-medium">{INFERENCE_FEE} SOL</span></span>
             </div>
             <button
               onClick={handleRun}
               disabled={isRunning || !prompt.trim()}
-              className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:shadow-[0_0_20px_hsl(45_93%_50%/0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:shadow-[0_0_20px_hsl(267_100%_64%/0.3)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isRunning ? (
                 <>
@@ -237,12 +226,12 @@ const RunInference = () => {
 
           <div className="flex gap-3 pt-2">
             <a
-              href={`https://bscscan.com/tx/${result.txHash}`}
+              href={`https://solscan.io/tx/${result.txHash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 rounded-lg bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
             >
-              View on BscScan
+              View on Solscan
             </a>
           </div>
         </motion.div>

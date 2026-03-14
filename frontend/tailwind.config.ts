@@ -52,10 +52,10 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         neon: {
-          green: "hsl(var(--neon-gold))",
-          "green-dim": "hsl(var(--neon-gold-dim))",
-          blue: "hsl(var(--warm-orange))",
-          "blue-dim": "hsl(var(--warm-orange-dim))",
+          green: "hsl(var(--neon-purple))",
+          "green-dim": "hsl(var(--neon-purple-dim))",
+          blue: "hsl(var(--sol-green))",
+          "blue-dim": "hsl(var(--sol-green-dim))",
         },
         surface: {
           1: "hsl(var(--surface-1))",

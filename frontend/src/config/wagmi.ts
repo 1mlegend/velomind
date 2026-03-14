@@ -1,17 +1,12 @@
-import { http, createConfig } from 'wagmi';
-import { hardhat, bsc } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
+import { clusterApiUrl, Connection } from '@solana/web3.js';
 
-const useHardhat = import.meta.env.DEV && import.meta.env.VITE_NETWORK !== 'bsc';
+// Treasury wallet that receives inference payments
+export const TREASURY_ADDRESS = import.meta.env.VITE_TREASURY_ADDRESS || '';
 
-export const config = createConfig({
-  chains: useHardhat ? [hardhat] : [bsc],
-  connectors: [
-    injected(),
-  ],
-  transports: {
-    ...(useHardhat
-      ? { [hardhat.id]: http('http://127.0.0.1:8545') }
-      : { [bsc.id]: http() }),
-  },
-});
+// Solana connection
+export const SOLANA_NETWORK = (import.meta.env.VITE_SOLANA_NETWORK || 'mainnet-beta') as 'mainnet-beta' | 'devnet';
+export const SOLANA_RPC = import.meta.env.VITE_SOLANA_RPC || clusterApiUrl(SOLANA_NETWORK);
+export const connection = new Connection(SOLANA_RPC, 'confirmed');
+
+// Inference fee in SOL
+export const INFERENCE_FEE = 0.00001;

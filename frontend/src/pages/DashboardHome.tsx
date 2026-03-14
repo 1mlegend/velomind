@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Activity, Cpu, Shield, ArrowUpRight, Clock, Wallet } from "lucide-react";
-import { useAccount } from "wagmi";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { useQuery } from "@tanstack/react-query";
 import { getStats, getJobs } from "@/lib/api";
 
@@ -12,7 +12,8 @@ const statusColors: Record<string, string> = {
 };
 
 const DashboardHome = () => {
-  const { address, isConnected } = useAccount();
+  const { publicKey, connected } = useWallet();
+  const address = publicKey?.toBase58();
 
   const { data: stats } = useQuery({
     queryKey: ["stats", address],
@@ -26,7 +27,7 @@ const DashboardHome = () => {
     enabled: !!address,
   });
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <Wallet className="w-12 h-12 text-primary mb-4" />
@@ -89,7 +90,7 @@ const DashboardHome = () => {
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[job.status] || statusColors.pending}`}>
                     {job.status}
                   </span>
-                  <span className="text-muted-foreground text-xs">{job.cost} BNB</span>
+                  <span className="text-muted-foreground text-xs">{job.cost} SOL</span>
                   <span className="text-muted-foreground text-xs hidden sm:block">
                     {new Date(job.createdAt).toLocaleString()}
                   </span>

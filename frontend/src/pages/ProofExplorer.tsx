@@ -1,22 +1,22 @@
 import { motion } from "framer-motion";
 import { Search, ExternalLink, Wallet } from "lucide-react";
 import { useState } from "react";
-import { useAccount, useReadContract } from "wagmi";
-import { CONTRACTS } from "@/config/contracts";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useQuery } from "@tanstack/react-query";
+import { getJobs } from "@/lib/api";
 
 const ProofExplorer = () => {
-  const { address, isConnected } = useAccount();
+  const { publicKey, connected } = useWallet();
+  const address = publicKey?.toBase58();
   const [search, setSearch] = useState("");
 
-  const { data: proofIds } = useReadContract({
-    address: CONTRACTS.proofRegistry.address,
-    abi: CONTRACTS.proofRegistry.abi,
-    functionName: "getProofsByUser",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
+  const { data: jobs } = useQuery({
+    queryKey: ["jobs", address],
+    queryFn: () => getJobs(address!),
+    enabled: !!address,
   });
 
-  if (!isConnected) {
+  if (!connected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
         <Wallet className="w-12 h-12 text-primary mb-4" />
@@ -26,13 +26,13 @@ const ProofExplorer = () => {
     );
   }
 
-  const ids = (proofIds as `0x${string}`[] | undefined) || [];
+  const proofs = (jobs || []).filter((j: any) => j.proofTxHash);
 
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="font-display text-2xl font-bold text-foreground">Proof Explorer</h1>
-        <p className="text-muted-foreground text-sm">Browse and verify cryptographic proofs anchored on BNB Chain</p>
+        <p className="text-muted-foreground text-sm">Browse and verify cryptographic proofs anchored on Solana</p>
       </div>
 
       <div className="relative">
@@ -47,76 +47,64 @@ const ProofExplorer = () => {
       </div>
 
       <div className="space-y-4">
-        {ids.length === 0 ? (
+        {proofs.length === 0 ? (
           <div className="glass rounded-xl p-8 gradient-border text-center text-muted-foreground text-sm">
             No proofs found. Run an inference to generate your first proof.
           </div>
         ) : (
-          ids.filter((id) => !search || id.toLowerCase().includes(search.toLowerCase())).map((proofId, i) => (
-            <ProofCard key={proofId} proofId={proofId} index={i} />
-          ))
+          proofs
+            .filter((j: any) => !search || j.id.toLowerCase().includes(search.toLowerCase()) || j.proofTxHash?.toLowerCase().includes(search.toLowerCase()))
+            .map((job: any, i: number) => (
+              <motion.div
+                key={job.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="glass-hover rounded-xl p-5 gradient-border"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-sm text-primary font-semibold">
+                      {job.id.slice(0, 10)}...{job.id.slice(-6)}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
+                      verified
+                    </span>
+                  </div>
+                  <span className="text-muted-foreground text-xs">
+                    {new Date(job.createdAt).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1">Input Hash</p>
+                    <p className="font-mono text-xs text-foreground bg-muted/20 rounded-lg p-2 break-all">
+                      {job.inputHash ? `${job.inputHash.slice(0, 14)}...${job.inputHash.slice(-8)}` : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1">Output Hash</p>
+                    <p className="font-mono text-xs text-foreground bg-muted/20 rounded-lg p-2 break-all">
+                      {job.outputHash ? `${job.outputHash.slice(0, 14)}...${job.outputHash.slice(-8)}` : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1">Model</p>
+                    <p className="font-mono text-xs text-secondary bg-muted/20 rounded-lg p-2 break-all flex items-center gap-1">
+                      {job.model}
+                      <a href={`https://solscan.io/tx/${job.proofTxHash}`} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))
         )}
       </div>
     </div>
   );
 };
-
-function ProofCard({ proofId, index }: { proofId: `0x${string}`; index: number }) {
-  const { data: proof } = useReadContract({
-    address: CONTRACTS.proofRegistry.address,
-    abi: CONTRACTS.proofRegistry.abi,
-    functionName: "getProof",
-    args: [proofId],
-  });
-
-  const p = proof as any;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="glass-hover rounded-xl p-5 gradient-border"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-sm text-primary font-semibold">
-            {proofId.slice(0, 10)}...{proofId.slice(-6)}
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
-            verified
-          </span>
-        </div>
-        {p?.timestamp && (
-          <span className="text-muted-foreground text-xs">
-            {new Date(Number(p.timestamp) * 1000).toLocaleString()}
-          </span>
-        )}
-      </div>
-
-      <div className="grid sm:grid-cols-3 gap-3">
-        <div>
-          <p className="text-[10px] text-muted-foreground mb-1">Input Hash</p>
-          <p className="font-mono text-xs text-foreground bg-muted/20 rounded-lg p-2 break-all">
-            {p?.inputHash ? `${(p.inputHash as string).slice(0, 14)}...${(p.inputHash as string).slice(-8)}` : "Loading..."}
-          </p>
-        </div>
-        <div>
-          <p className="text-[10px] text-muted-foreground mb-1">Output Hash</p>
-          <p className="font-mono text-xs text-foreground bg-muted/20 rounded-lg p-2 break-all">
-            {p?.outputHash ? `${(p.outputHash as string).slice(0, 14)}...${(p.outputHash as string).slice(-8)}` : "Loading..."}
-          </p>
-        </div>
-        <div>
-          <p className="text-[10px] text-muted-foreground mb-1">Model</p>
-          <p className="font-mono text-xs text-secondary bg-muted/20 rounded-lg p-2 break-all flex items-center gap-1">
-            {p?.model || "Loading..."}
-            <ExternalLink className="w-3 h-3 flex-shrink-0" />
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 export default ProofExplorer;
